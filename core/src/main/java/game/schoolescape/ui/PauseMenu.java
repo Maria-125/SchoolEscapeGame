@@ -15,7 +15,6 @@ public class PauseMenu {
     private UIFactory.Button settingsButton;
 
     public PauseMenu(SchoolEscapeGame game) {
-        // Тексты кнопок переведены на русский
         resumeButton = new UIFactory.Button(300, 280, 200, 50, "Продолжить", game.font, game.buttonTexture);
         settingsButton = new UIFactory.Button(300, 210, 200, 50, "Настройки", game.font, game.buttonTexture);
     }
@@ -44,7 +43,6 @@ public class PauseMenu {
         batch.draw(game.whitePixel, 0, 0, 800, 480);
         batch.setColor(1, 1, 1, 1);
 
-        // Заголовок изменен на русский
         font.draw(batch, "ПАУЗА", 370, 380);
 
         resumeButton.draw(batch);

@@ -14,14 +14,13 @@ public class EffectManager {
 
     private Array<Particle> particles = new Array<>();
 
-    // Спавн облака цветных пикселей-осколков
     public void spawnExplosion(float x, float y, Color color, int count) {
         for (int i = 0; i < count; i++) {
             Particle p = new Particle();
             p.x = x;
             p.y = y;
             p.vx = MathUtils.random(-150f, 150f);
-            p.vy = MathUtils.random(-50f, 250f); // летят преимущественно вверх
+            p.vy = MathUtils.random(-50f, 250f);
             p.life = MathUtils.random(0.4f, 0.8f);
             p.color = color;
             particles.add(p);
@@ -36,14 +35,14 @@ public class EffectManager {
                 particles.removeIndex(i);
                 continue;
             }
-            // физика частиц без Box2D
-            p.vy -= 400 * delta; // гравитация для частиц
+
+            p.vy -= 400 * delta;
             p.x += p.vx * delta;
             p.y += p.vy * delta;
 
-            batch.setColor(p.color.r, p.color.g, p.color.b, p.life); // угасание прозрачности
+            batch.setColor(p.color.r, p.color.g, p.color.b, p.life);
             batch.draw(pixelTexture, p.x, p.y, 6, 6);
         }
-        batch.setColor(Color.WHITE); // сброс маски цвета
+        batch.setColor(Color.WHITE);
     }
 }

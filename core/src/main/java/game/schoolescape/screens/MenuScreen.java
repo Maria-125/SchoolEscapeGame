@@ -59,7 +59,6 @@ public class MenuScreen extends ScreenAdapter {
             if (startButton.isHit(touch.x, touch.y)) {
                 LevelManager levelManager = new LevelManager();
 
-                // ИСПРАВЛЕНО: Принудительный сброс менеджера к 1 классу перед запуском
                 levelManager.currentLevel = 1;
                 levelManager.booksCollected = 0;
                 levelManager.booksToCollect = levelManager.getBooksRequired();

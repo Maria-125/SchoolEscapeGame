@@ -65,7 +65,6 @@ public class GameOverScreen extends ScreenAdapter {
                 game.setScreen(new GameScreen(game, levelManager));
             }
             else if (startOverButton.isHit(tx, ty)) {
-                // ИСПРАВЛЕНО: Сброс переданного levelManager до 1 класса, чтобы скорость учителя обнулилась
                 levelManager.currentLevel = 1;
                 levelManager.booksCollected = 0;
                 levelManager.booksToCollect = levelManager.getBooksRequired();

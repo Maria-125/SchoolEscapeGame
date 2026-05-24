@@ -12,7 +12,6 @@ public class MemoryManager {
     }
 
     public static boolean loadIsMusicOn() {
-        // ИСПРАВЛЕНО: Изменено с putBoolean на getBoolean для правильного возврата значения
         return prefs.getBoolean("music", true);
     }
 
@@ -22,7 +21,6 @@ public class MemoryManager {
     }
 
     public static boolean loadIsSoundOn() {
-        // ИСПРАВЛЕНО: Изменено с putBoolean на getBoolean для правильного возврата значения
         return prefs.getBoolean("sound", true);
     }
 }

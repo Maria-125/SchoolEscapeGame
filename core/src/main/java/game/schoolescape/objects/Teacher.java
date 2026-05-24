@@ -13,16 +13,14 @@ public class Teacher {
     public float acceleration = 1.7f;
     public float speedIncreaseTimer = 0;
 
-    // Текстуры для анимации ходьбы
     private Texture texture1;
     private Texture texture2;
     private float animTimer = 0;
     private boolean useSecondTexture = false;
 
-    // ИСПРАВЛЕНО: Текстуры и таймеры для анимации удара
     private Texture textureHit1;
     private Texture textureHit2;
-    public boolean isHitting = false; // Флаг: бьет ли учитель в данный момент
+    public boolean isHitting = false;
     private float hitAnimTimer = 0;
     private boolean useSecondHitTexture = false;
 
@@ -30,20 +28,18 @@ public class Teacher {
         texture1 = new Texture(FilePaths.TEACHER);
         texture2 = new Texture(FilePaths.TEACHER2);
 
-        // Загружаем картинки ударов
         textureHit1 = new Texture(FilePaths.TEACHER_HIT1);
         textureHit2 = new Texture(FilePaths.TEACHER_HIT2);
     }
 
     public void update(float playerX, float playerSpeed, float delta) {
-        // Если учитель бьет, он застывает на месте и проигрывает анимацию удара
         if (isHitting) {
             hitAnimTimer += delta;
-            if (hitAnimTimer > 0.15f) { // Частота смены кулаков (вверх / прямо)
+            if (hitAnimTimer > 0.15f) {
                 hitAnimTimer = 0;
                 useSecondHitTexture = !useSecondHitTexture;
             }
-            return; // Прерываем движение, пока идет удар
+            return;
         }
 
         speedIncreaseTimer += delta;
@@ -83,14 +79,13 @@ public class Teacher {
         speedIncreaseTimer = 0;
         x = 50;
         y = 160;
-        isHitting = false; // Сбрасываем режим удара
+        isHitting = false;
         hitAnimTimer = 0;
     }
 
     public void draw(SpriteBatch batch) {
         Texture currentTexture;
 
-        // ИСПРАВЛЕНО: Если активирован удар, рисуем кулаки, иначе — обычный бег
         if (isHitting) {
             currentTexture = useSecondHitTexture ? textureHit2 : textureHit1;
         } else {

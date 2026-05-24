@@ -41,12 +41,9 @@ public class LevelCompleteScreen extends ScreenAdapter {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        // ИСПРАВЛЕНО: Сбрасываем позицию камеры в центр экрана (400, 240),
-        // чтобы она не оставалась на координатах финиша ученика из прошлого уровня!
         game.camera.position.set(400, 240, 0);
         game.camera.update();
 
-        // Применяем вьюпорт. Теперь он отцентрирует картинку строго по координатам (400, 240)
         game.viewport.apply();
         game.batch.setProjectionMatrix(game.viewport.getCamera().combined);
 
@@ -68,7 +65,6 @@ public class LevelCompleteScreen extends ScreenAdapter {
         if (Gdx.input.justTouched()) {
             Vector3 touch = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
 
-            // Считываем клики через вьюпорт, привязанный к центрированной камере
             game.viewport.unproject(touch);
 
             if (nextButton.isHit(touch.x, touch.y)) {

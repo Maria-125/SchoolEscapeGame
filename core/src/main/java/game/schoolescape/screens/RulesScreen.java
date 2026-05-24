@@ -14,7 +14,6 @@ public class RulesScreen extends ScreenAdapter {
 
     public RulesScreen(SchoolEscapeGame game) {
         this.game = game;
-        // ИСПРАВЛЕНО: Добавлен седьмой параметр game.buttonTexture, текст кнопки переведен на русский язык
         backButton = new UIFactory.Button(300, 80, 200, 50, "Назад", game.font, game.buttonTexture);
     }
 
@@ -35,7 +34,6 @@ public class RulesScreen extends ScreenAdapter {
             game.batch.draw(game.menuBackground, 0, 0, 800, 480);
         }
 
-        // ИСПРАВЛЕНО: Все тексты правил переведены на русский язык и обновлены под управление двумя кнопками на телефоне
         game.font.draw(game.batch, "ПРАВИЛА ИГРЫ", 340, 390);
         game.font.draw(game.batch, "Собирай 5, чтобы ускориться", 100, 360);
         game.font.draw(game.batch, "Избегай 2, чтобы не замедляться", 100, 330);

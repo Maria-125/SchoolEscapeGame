@@ -20,14 +20,12 @@ public class Player {
     private float minSpeed = 40;
     private float maxSpeed = 120;
 
-    // Текстуры для анимации ходьбы
     private Texture texture1;
     private Texture texture2;
     private float animTimer = 0;
     private boolean useSecondTexture = false;
 
     public Player() {
-        // Загружаем обе картинки ног ученика
         texture1 = new Texture(FilePaths.PLAYER);
         texture2 = new Texture(FilePaths.PLAYER2);
     }
@@ -46,7 +44,7 @@ public class Player {
             isGrounded = false;
         }
 
-        // Логика смены ног: переключаем текстуры каждые 0.15 секунды только когда бежим по земле
+        // смена ног
         if (isGrounded) {
             animTimer += delta;
             if (animTimer > 0.15f) {
@@ -54,7 +52,6 @@ public class Player {
                 useSecondTexture = !useSecondTexture;
             }
         } else {
-            // В воздухе (при прыжке) всегда используется первая стандартная поза
             useSecondTexture = false;
         }
     }
@@ -83,7 +80,6 @@ public class Player {
     }
 
     public void draw(SpriteBatch batch) {
-        // Отрисовываем активную в данный момент текстуру ног
         Texture currentTexture = useSecondTexture ? texture2 : texture1;
         batch.draw(currentTexture, x, y, width * 3, height * 3);
     }

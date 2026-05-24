@@ -1,4 +1,4 @@
-package game.schoolescape.managers;     //
+package game.schoolescape.managers;
 
 public class FilePaths {
     // изображения

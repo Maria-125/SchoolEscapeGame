@@ -20,11 +20,9 @@ public class SettingsScreen extends ScreenAdapter {
         this.game = game;
         this.previousScreen = previousScreen;
 
-        // Переведено на русский язык
         String musicText = MemoryManager.loadIsMusicOn() ? "Музыка: ВКЛ" : "Музыка: ВЫКЛ";
         String soundText = MemoryManager.loadIsSoundOn() ? "Звуки: ВКЛ" : "Звуки: ВЫКЛ";
 
-        // ИСПРАВЛЕНО: Добавлен седьмой параметр game.buttonTexture в конструкторы всех трех кнопок
         musicButton = new UIFactory.Button(300, 300, 200, 50, musicText, game.font, game.buttonTexture);
         soundButton = new UIFactory.Button(300, 230, 200, 50, soundText, game.font, game.buttonTexture);
         backButton = new UIFactory.Button(300, 160, 200, 50, "Назад", game.font, game.buttonTexture);
@@ -45,7 +43,6 @@ public class SettingsScreen extends ScreenAdapter {
         if (game.menuBackground != null) {
             game.batch.draw(game.menuBackground, 0, 0, 800, 480);
         }
-        // Заголовок переведен на русский язык
         game.font.draw(game.batch, "Настройки", 350, 380);
         musicButton.draw(game.batch);
         soundButton.draw(game.batch);
@@ -65,14 +62,12 @@ public class SettingsScreen extends ScreenAdapter {
                 game.soundManager.isMusicOn = newState;
                 if (newState) game.soundManager.playMusic();
                 else game.soundManager.stopMusic();
-                // Текст переключения переведен на русский язык
                 musicButton.setText(newState ? "Музыка: ВКЛ" : "Музыка: ВЫКЛ");
             }
             else if (soundButton.isHit(tx, ty)) {
                 boolean newState = !MemoryManager.loadIsSoundOn();
                 MemoryManager.saveSoundSettings(newState);
                 game.soundManager.isSoundOn = newState;
-                // Текст переключения переведен на русский язык
                 soundButton.setText(newState ? "Звуки: ВКЛ" : "Звуки: ВЫКЛ");
             }
             else if (backButton.isHit(tx, ty)) {

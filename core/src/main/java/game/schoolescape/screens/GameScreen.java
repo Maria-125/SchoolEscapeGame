@@ -30,11 +30,10 @@ public class GameScreen extends ScreenAdapter {
     PauseMenu pause;
 
     private UIFactory.Button pauseButton;
-    private OrthographicCamera uiCamera; // Статичная камера для наэкранных кнопок
-    private FitViewport uiViewport;      // Мобильный вьюпорт для интерфейса
+    private OrthographicCamera uiCamera;
+    private FitViewport uiViewport;
     float spawnTimer = 0;
 
-    // Мобильное управление
     private UIFactory.Button mobileJumpButton;
     private UIFactory.Button mobileShootButton;
     private Texture jumpBtnTexture;
@@ -57,7 +56,6 @@ public class GameScreen extends ScreenAdapter {
         player = new Player();
         teacher = new Teacher();
 
-        // ЖЕСТКИЙ СБРОС ИГРОВОЙ КАМЕРЫ ПРИ СТАРТЕ
         game.camera.position.x = 400;
         game.camera.position.y = 350;
         game.camera.update();
@@ -77,14 +75,12 @@ public class GameScreen extends ScreenAdapter {
         levelManager.booksCollected = 0;
         levelManager.booksToCollect = levelManager.getBooksRequired();
 
-        // ИСПРАВЛЕНО: Создаем независимый FitViewport специально для UI элементов (800х480)
         uiCamera = new OrthographicCamera();
         uiViewport = new FitViewport(800, 480, uiCamera);
         uiViewport.apply();
         uiCamera.position.set(400, 240, 0);
         uiCamera.update();
 
-        // Создание кнопок интерфейса в фиксированных координатах экрана
         pauseButton = new UIFactory.Button(720, 410, 60, 50, "||", game.font, game.buttonTexture);
 
         jumpBtnTexture = new Texture(Gdx.files.internal(FilePaths.JUMP_BUTTON));
@@ -125,7 +121,6 @@ public class GameScreen extends ScreenAdapter {
             updateGame(delta);
         }
 
-        // 1. Обновляем ИГРОВУЮ камеру мира за учеником
         game.camera.position.x = player.x + 150;
         game.camera.position.y = 350;
         game.camera.update();
@@ -133,7 +128,6 @@ public class GameScreen extends ScreenAdapter {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        // 2. ОТРИСОВКА ИГРОВОГО МИРА (Привязана к движущейся камере)
         game.batch.setProjectionMatrix(game.camera.combined);
         game.batch.begin();
         world.draw(game.batch, game.camera.position.x);
@@ -142,10 +136,9 @@ public class GameScreen extends ScreenAdapter {
         for (Book b : books) b.draw(game.batch);
         for (Grade g : grades) g.draw(game.batch);
         for (PaperShot s : shots) s.draw(game.batch);
-        drawUI(); // Текст рисуется в координатах игрового мира вслед за камерой
+        drawUI();
         game.batch.end();
 
-        // Отрисовка частиц эффектов в координатах мира
         if (particles.size > 0) {
             Gdx.gl.glEnable(GL20.GL_BLEND);
             shapeRenderer.setProjectionMatrix(game.camera.combined);
@@ -158,8 +151,6 @@ public class GameScreen extends ScreenAdapter {
             Gdx.gl.glDisable(GL20.GL_BLEND);
         }
 
-        // 3. ОТРИСОВКА ИНТЕРФЕЙСА (Привязана к неподвижной UI-камере)
-        // Теперь кнопки ЖЕСТКО застынут на экране и не улетят вслед за бегом ученика!
         game.batch.setProjectionMatrix(uiCamera.combined);
         game.batch.begin();
         pauseButton.draw(game.batch);
@@ -199,7 +190,6 @@ public class GameScreen extends ScreenAdapter {
     }
 
     void updateGame(float delta) {
-        // Если учитель бьет ученика, мы обновляем ТОЛЬКО учителя (для анимации кулаков) и частицы
         teacher.update(player.x, player.currentSpeed, delta);
 
         if (!teacher.isHitting) {
@@ -213,7 +203,6 @@ public class GameScreen extends ScreenAdapter {
         checkTeacherCaught();
         checkLevelCompletion();
 
-        // Обновление частиц работает всегда
         for (int i = particles.size - 1; i >= 0; i--) {
             Particle p = particles.size > i ? particles.get(i) : null;
             if (p != null) {
@@ -274,7 +263,6 @@ public class GameScreen extends ScreenAdapter {
     void checkCollisions() {
         boolean soundOn = game.soundManager != null && game.soundManager.isSoundOn && MemoryManager.loadIsSoundOn();
 
-        // 1. Снаряд попал в книгу (устранен пропуск снарядов в цикле)
         for (int i = 0; i < shots.size; ) {
             PaperShot shot = shots.get(i);
             boolean shotDestroyed = false;
@@ -283,7 +271,6 @@ public class GameScreen extends ScreenAdapter {
                 Book book = books.get(j);
                 if (book.isVisible(game.camera.position.x) && shot.getBounds().overlaps(book.getBounds())) {
 
-                    // ЭФФЕКТ: Голубая вспышка частиц бумаги
                     spawnParticles(book.x + book.width, book.y + book.height / 2, com.badlogic.gdx.graphics.Color.CYAN, 15);
 
                     shots.removeIndex(i);
@@ -298,13 +285,11 @@ public class GameScreen extends ScreenAdapter {
                 }
             }
 
-            // Если снаряд удалился, индекс 'i' увеличивать не нужно
             if (!shotDestroyed) {
                 i++;
             }
         }
 
-        // 2. Игрок подобрал оценку
         for (int i = 0; i < grades.size; i++) {
             Grade grade = grades.get(i);
             if (player.getBounds().overlaps(grade.getBounds())) {
@@ -312,7 +297,6 @@ public class GameScreen extends ScreenAdapter {
                 if (grade.value == 5) {
                     player.increaseSpeed();
 
-                    // ЭФФЕКТ: Салют из зеленых частиц
                     spawnParticles(player.x + player.width, player.y + player.height, com.badlogic.gdx.graphics.Color.GREEN, 15);
 
                     if (soundOn && game.soundManager.collect5 != null)
@@ -320,7 +304,6 @@ public class GameScreen extends ScreenAdapter {
                 } else {
                     player.decreaseSpeed();
 
-                    // ЭФФЕКТ: Падающие красные частицы
                     spawnParticles(player.x + player.width, player.y + player.height, com.badlogic.gdx.graphics.Color.RED, 15);
 
                     if (soundOn && game.soundManager.collect2 != null)
@@ -330,12 +313,11 @@ public class GameScreen extends ScreenAdapter {
             }
         }
 
-        // 3. Игрок врезался в книгу (урон)
+
         for (int i = 0; i < books.size; i++) {
             Book book = books.get(i);
             if (book.isVisible(game.camera.position.x) && player.getBounds().overlaps(book.getBounds())) {
 
-                // ЭФФЕКТ: Урон от книги (оранжевые искры)
                 spawnParticles(player.x + player.width, player.y + player.height, com.badlogic.gdx.graphics.Color.ORANGE, 15);
 
                 books.removeIndex(i--);
@@ -350,12 +332,10 @@ public class GameScreen extends ScreenAdapter {
     void checkTeacherCaught() {
         boolean soundOn = game.soundManager != null && game.soundManager.isSoundOn && MemoryManager.loadIsSoundOn();
 
-        // 1. Если учитель коснулся ученика и удар еще НЕ начался
         if (player.getBounds().overlaps(teacher.getBounds()) && !teacher.isHitting) {
-            teacher.isHitting = true; // Переводим учителя в режим удара кулаками
-            hitFreezeTimer = 1.0f;    // Включаем задержку времени на 1 секунду
+            teacher.isHitting = true;
+            hitFreezeTimer = 1.0f;
 
-            // Запускаем красивый эффект фиолетового взрыва прямо в момент первого удара
             spawnParticles(player.x + player.width, player.y + player.height, com.badlogic.gdx.graphics.Color.PURPLE, 25);
 
             if (soundOn && game.soundManager.hit != null) {
@@ -363,22 +343,18 @@ public class GameScreen extends ScreenAdapter {
             }
         }
 
-        // 2. Логика обработки задержки удара
         if (teacher.isHitting) {
-            hitFreezeTimer -= Gdx.graphics.getDeltaTime(); // Уменьшаем таймер каждую секунду
+            hitFreezeTimer -= Gdx.graphics.getDeltaTime();
 
-            // Каждые несколько кадров подсыпаем искры эффектов во время избиения
             if (Math.random() > 0.7) {
                 spawnParticles(player.x + player.width, player.y + player.height, com.badlogic.gdx.graphics.Color.PURPLE, 3);
             }
 
-            // Когда секунда ударов прошла — официально отнимаем жизнь и перезапускаем
             if (hitFreezeTimer <= 0) {
-                teacher.isHitting = false; // Выключаем удар
-                logic.loseLife();          // Отнимаем жизнь
+                teacher.isHitting = false;
+                logic.loseLife();
 
                 if (logic.lives > 0) {
-                    // Сбрасываем позиции и камеру назад
                     game.camera.position.x = 400;
                     game.camera.update();
                     resetPositions();
@@ -390,7 +366,6 @@ public class GameScreen extends ScreenAdapter {
         }
     }
 
-    // Переменная для удержания времени удара (добавь её к полям класса вверху, если нужно, либо оставь здесь)
     private float hitFreezeTimer = 0;
 
     void checkLevelCompletion() {
@@ -439,7 +414,6 @@ public class GameScreen extends ScreenAdapter {
             }
         }
 
-        // Блокируем управление кнопками на телефоне, пока идет анимация удара учителя
         if (!pause.isPaused && !logic.gameOver && !teacher.isHitting) {
             for (int i = 0; i < 2; i++) {
                 if (Gdx.input.isTouched(i)) {
