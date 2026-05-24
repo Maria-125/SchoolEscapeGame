@@ -1,35 +1,110 @@
-# School Escape
+Декомпозиция 
 
-A [libGDX](https://libgdx.com/) project generated with [gdx-liftoff](https://github.com/libgdx/gdx-liftoff).
+1 уровень: Группы и основные классы
 
-This project was generated with a template including simple application launchers and an `ApplicationAdapter` extension that draws libGDX logo.
+- Ядро игры — главные классы, которые запускают и управляют приложением. Сюда входят `SchoolEscapeGame` (точка входа), `LevelManager` (управление уровнями и сложностью) и `FilePaths` (хранение путей ко всем ресурсам).
+- Пользовательский интерфейс (UI) — всё, что видит игрок на экране: кнопки, текст, фон, меню паузы, экраны завершения уровня и победы.
+- Игровые объекты — объекты в игре, которые двигаются и взаимодействуют: ученик, учитель, учебники, оценки, бумажные самолетики.
+- Менеджеры — специальные классы-помощники, которые управляют звуком, сохранением данных, отрисовкой фона и шрифтами.
 
-## Platforms
 
-- `core`: Main module with the application logic shared by all platforms.
-- `lwjgl3`: Primary desktop platform using LWJGL3; was called 'desktop' in older docs.
-- `android`: Android mobile platform. Needs Android SDK.
+2 уровень: Классы внутри каждой группы
 
-## Gradle
+Группа «Ядро игры»:
+- `SchoolEscapeGame` — главный класс приложения. Он создаёт камеру, шрифты, звуковой менеджер и переключает экраны.
+- `LevelManager` — хранит текущий уровень, контрольные точки, количество собранных учебников, а также управляет сложностью уровня.
+- `FilePaths` — список путей ко всем картинкам, шрифтам и звукам.
 
-This project uses [Gradle](https://gradle.org/) to manage dependencies.
-The Gradle wrapper was included, so you can run Gradle tasks using `gradlew.bat` or `./gradlew` commands.
-Useful Gradle tasks and flags:
+Группа «Экраны»:
+- `MenuScreen` — главное меню.
+- `GameScreen` — основной игровой процесс.
+- `SettingsScreen` — настройки звука.
+- `RulesScreen` — правила игры.
+- `LevelCompleteScreen` — экран между уровнями.
+- `GameOverScreen` — экран при смерти.
+- `WinScreen` — экран победы после 11 класса.
 
-- `--continue`: when using this flag, errors will not stop the tasks from running.
-- `--daemon`: thanks to this flag, Gradle daemon will be used to run chosen tasks.
-- `--offline`: when using this flag, cached dependency archives will be used.
-- `--refresh-dependencies`: this flag forces validation of all dependencies. Useful for snapshot versions.
-- `android:lint`: performs Android project validation.
-- `build`: builds sources and archives of every project.
-- `cleanEclipse`: removes Eclipse project data.
-- `cleanIdea`: removes IntelliJ project data.
-- `clean`: removes `build` folders, which store compiled classes and built archives.
-- `eclipse`: generates Eclipse project data.
-- `idea`: generates IntelliJ project data.
-- `lwjgl3:jar`: builds application's runnable jar, which can be found at `lwjgl3/build/libs`.
-- `lwjgl3:run`: starts the application.
-- `test`: runs unit tests (if any).
+Группа «UI» (элементы интерфейса):
+- `UIFactory.Button` — кнопка с текстурой и текстом.
+- `PauseMenu` — меню паузы с кнопками.
+- `WorldScroller` — бесконечный движущийся фон.
 
-Note that most tasks that are not specific to a single project can be run with `name:` prefix, where the `name` should be replaced with the ID of a specific project.
-For example, `core:clean` removes `build` folder only from the `core` project.
+Группа «Игровые объекты»:
+- `Player` — ученик (прыжки, скорость, сбор оценок).
+- `Teacher` — учитель (догоняет, ускоряется со временем).
+- `Book` — учебник (летит на игрока, его нужно сбивать).
+- `Grade` — оценка (5 или 2, влияет на скорость ученика).
+- `PaperShot` — бумажный самолетик (выстрел бумажкой).
+
+Группа «Менеджеры»:
+- `SoundManager` — включает/выключает музыку и звуки.
+- `MemoryManager` — сохраняет настройки звука.
+- `GameLogic` — хранит жизни и флаг окончания игры.
+- `GradeCalculator` — считает средний балл за уровень.
+
+
+3 уровень: Поля и методы внутри классов
+
+`Player` (ученик):
+- Поля: `x`, `y`, `currentSpeed` — позиция и скорость ученика.
+- Методы: `jump()` — прыжок, `increaseSpeed()` / `decreaseSpeed()` — изменение скорости  в зависимости от оценок, `resetSpeed()` — сброс скорости.
+
+`Teacher` (учитель):
+- Поля: `x`, `currentSpeed`, `acceleration` — позиция, скорость и ускорение учителя.
+- Методы: `update()` — догоняет ученика, `clampToCamera()` — не выходит за пределы экрана.
+
+`LevelManager` (управление уровнями):
+- Поля: `currentLevel`, `checkpointLevel`, `booksCollected`, `booksToCollect`.
+- Методы: `nextLevel()` — переход на следующий класс, `getTeacherSpeed()` — скорость учителя в зависимости от уровня, `getSpawnInterval()` — частота появления объектов.
+
+`GradeCalculator` (средний балл):
+- Поля: `totalPoints`, `totalGrades` — сумма всех оценок и их количество.
+- Метод: `addGrade(int value)` — добавляет оценку (5 или 2), `getAverage()` — возвращает средний балл.
+
+`GameScreen` (игровой процесс):
+- Методы: `updateGame()` — обновляет физику и объекты, `spawnObjects()` — создаёт учебники и оценки, `checkCollisions()` — обрабатывает столкновения, `checkLevelCompletion()` — проверяет, пройден ли уровень.
+
+`PauseMenu` (меню паузы):
+- Поля: `isPaused` — состояние паузы.
+- Методы: `toggle()` — включить/выключить паузу, `drawPauseMenu()` — рисует полупрозрачный фон и кнопки.
+
+
+
+
+Паттерны 
+
+1. Состояние (State)
+Переключение между экранами игры: меню, игра, настройки, экран победы. Каждый экран ведёт себя по‑разному, хотя у них одинаковый интерфейс.
+
+2. Наблюдатель (Observer)
+Реагирование на столкновения объектов. ContactManager с помощью Box2D следит за столкновениями.
+
+3. Фабрика (Factory)
+Централизованное создание кнопок. UIFactory скрывает детали создания (текстуру, шрифт, координаты) и просто даёт готовую кнопку.
+
+4. Одиночка (Singleton)
+Глобальный доступ к настройкам. MemoryManager позволяет из любого места сохранять и загружать настройки звука, не создавая каждый раз новый объект.
+
+5. Команда (Command)
+Превращение нажатий клавиш в действия. Нажатие SPACE в прыжок, F в выстрел, P в паузу. Каждая команда инкапсулирует конкретное действие.
+
+6. Шаблонный метод (Template Method)
+Единый жизненный цикл экранов. Базовый класс ScreenAdapter определяет шаги (создать, рисовать, уничтожить), а мы переопределяем только нужные.
+
+7. Модель-Вид-Контроллер (MVC)
+Разделение данных, отрисовки и управления. Модели (Player, Teacher) хранят состояние, Вид (drawUI) рисует, Контроллер (handleInput) обрабатывает нажатия.
+
+8. Посредник (Mediator)
+Централизованное управление компонентами. GameScreen выступает посредником между учеником, учителем, учебниками, пулями — они не взаимодействуют друг с другом напрямую, а через игровой экран.
+
+9. Внедрение зависимости (Dependency Injection)
+Передача зависимостей через конструктор. GameScreen получает готовые объекты game и levelManager извне, а не создаёт их сам.
+
+10. Итератор (Iterator)
+Перебор коллекций объектов. Циклы for по массивам books, grades, shots скрывают внутреннюю структуру хранения.
+
+11. Снимок (Memento)
+Сохранение и восстановление состояния. LevelManager сохраняет контрольную точку (текущий уровень), а при смерти игрока возвращает состояние к этой точке.
+
+12. Стратегия (Strategy)
+Разное поведение объектов одного типа. Оценка 5 ускоряет ученика, оценка 2 — замедляет. Поведение можно менять, не изменяя остальной код.
