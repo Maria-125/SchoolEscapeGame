@@ -14,7 +14,8 @@ public class RulesScreen extends ScreenAdapter {
 
     public RulesScreen(SchoolEscapeGame game) {
         this.game = game;
-        backButton = new UIFactory.Button(300, 80, 200, 50, "Back", game.font);
+        // ИСПРАВЛЕНО: Добавлен седьмой параметр game.buttonTexture, текст кнопки переведен на русский язык
+        backButton = new UIFactory.Button(300, 80, 200, 50, "Назад", game.font, game.buttonTexture);
     }
 
     @Override
@@ -34,16 +35,16 @@ public class RulesScreen extends ScreenAdapter {
             game.batch.draw(game.menuBackground, 0, 0, 800, 480);
         }
 
-        game.font.draw(game.batch, "RULES", 370, 395);
-
-        game.font.draw(game.batch, "SPACE - jump", 250, 370);
-        game.font.draw(game.batch, "F - shoot paper", 250, 340);
-        game.font.draw(game.batch, "Collect 5 to speed up", 250, 310);
-        game.font.draw(game.batch, "Avoid 2 to not slow down", 250, 280);
-        game.font.draw(game.batch, "Shoot books before they hit you", 250, 250);
-        game.font.draw(game.batch, "Don't let teacher catch you!", 250, 220);
-        game.font.draw(game.batch, "Collect books to pass the level", 250, 190);
-        game.font.draw(game.batch, "Complete 11 classes to escape!", 250, 160);
+        // ИСПРАВЛЕНО: Все тексты правил переведены на русский язык и обновлены под управление двумя кнопками на телефоне
+        game.font.draw(game.batch, "ПРАВИЛА ИГРЫ", 340, 390);
+        game.font.draw(game.batch, "Собирай 5, чтобы ускориться", 100, 360);
+        game.font.draw(game.batch, "Избегай 2, чтобы не замедляться", 100, 330);
+        game.font.draw(game.batch, "Сбивай учебники бумажными самолётиками", 100, 300);
+        game.font.draw(game.batch, "   пока они не попали в тебя", 100, 280);
+        game.font.draw(game.batch, "Не позволяй учителю поймать тебя!", 100, 250);
+        game.font.draw(game.batch, "Собери нужное количество учебников", 100, 220);
+        game.font.draw(game.batch, "   чтобы пройти уровень", 100, 200);
+        game.font.draw(game.batch, "Пройди все 11 классов, чтобы сбежать из школы!", 100, 170);
 
         backButton.draw(game.batch);
 
@@ -53,7 +54,7 @@ public class RulesScreen extends ScreenAdapter {
     private void handleInput() {
         if (Gdx.input.justTouched()) {
             Vector3 touch = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-            game.camera.unproject(touch);
+            game.viewport.unproject(touch);
             float tx = touch.x, ty = touch.y;
 
             if (backButton.isHit(tx, ty)) {
@@ -61,4 +62,10 @@ public class RulesScreen extends ScreenAdapter {
             }
         }
     }
+
+    @Override
+    public void resize(int width, int height) {
+        game.viewport.update(width, height, true);
+    }
+
 }

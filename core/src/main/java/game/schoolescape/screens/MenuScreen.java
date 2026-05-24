@@ -3,6 +3,7 @@ package game.schoolescape.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector3;
 
 import game.schoolescape.SchoolEscapeGame;
@@ -14,12 +15,18 @@ public class MenuScreen extends ScreenAdapter {
     private UIFactory.Button startButton;
     private UIFactory.Button settingsButton;
     private UIFactory.Button rulesButton;
+    private OrthographicCamera uiCamera;
 
     public MenuScreen(SchoolEscapeGame game) {
         this.game = game;
-        startButton = new UIFactory.Button(300, 250, 200, 50, "Start", game.font);
-        settingsButton = new UIFactory.Button(300, 180, 200, 50, "Settings", game.font);
-        rulesButton = new UIFactory.Button(300, 110, 200, 50, "Rules", game.font);
+
+        uiCamera = new OrthographicCamera(800, 480);
+        uiCamera.position.set(400, 240, 0);
+        uiCamera.update();
+
+        startButton = new UIFactory.Button(300, 250, 200, 50, "Старт", game.font, game.buttonTexture);
+        settingsButton = new UIFactory.Button(300, 180, 200, 50, "Настройки", game.font, game.buttonTexture);
+        rulesButton = new UIFactory.Button(300, 110, 200, 50, "Правила", game.font, game.buttonTexture);
     }
 
     @Override
@@ -29,12 +36,9 @@ public class MenuScreen extends ScreenAdapter {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        game.camera.position.set(400, 240, 0);
-        game.camera.update();
-        game.batch.setProjectionMatrix(game.camera.combined);
+        game.batch.setProjectionMatrix(uiCamera.combined);
 
         game.batch.begin();
-
         if (game.menuBackground != null) {
             game.batch.draw(game.menuBackground, 0, 0, 800, 480);
         }
@@ -44,26 +48,41 @@ public class MenuScreen extends ScreenAdapter {
         startButton.draw(game.batch);
         settingsButton.draw(game.batch);
         rulesButton.draw(game.batch);
-
         game.batch.end();
     }
 
     private void handleInput() {
         if (Gdx.input.justTouched()) {
             Vector3 touch = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-            game.camera.unproject(touch);
-            float tx = touch.x, ty = touch.y;
+            game.viewport.unproject(touch);
 
-            if (startButton.isHit(tx, ty)) {
+            if (startButton.isHit(touch.x, touch.y)) {
                 LevelManager levelManager = new LevelManager();
+
+                // ИСПРАВЛЕНО: Принудительный сброс менеджера к 1 классу перед запуском
+                levelManager.currentLevel = 1;
+                levelManager.booksCollected = 0;
+                levelManager.booksToCollect = levelManager.getBooksRequired();
+                levelManager.setCheckpoint();
+
+                com.badlogic.gdx.Preferences prefs = Gdx.app.getPreferences("schoolescape_prefs");
+                prefs.putInteger("saved_level", 1);
+                prefs.flush();
+
                 game.setScreen(new GameScreen(game, levelManager));
             }
-            else if (settingsButton.isHit(tx, ty)) {
+            else if (settingsButton.isHit(touch.x, touch.y)) {
                 game.setScreen(new SettingsScreen(game, this));
             }
-            else if (rulesButton.isHit(tx, ty)) {
+            else if (rulesButton.isHit(touch.x, touch.y)) {
                 game.setScreen(new RulesScreen(game));
             }
         }
     }
+
+    @Override
+    public void resize(int width, int height) {
+        game.viewport.update(width, height, true);
+    }
+
 }

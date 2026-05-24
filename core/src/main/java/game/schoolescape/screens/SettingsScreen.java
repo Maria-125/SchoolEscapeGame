@@ -20,12 +20,14 @@ public class SettingsScreen extends ScreenAdapter {
         this.game = game;
         this.previousScreen = previousScreen;
 
-        String musicText = MemoryManager.loadIsMusicOn() ? "Music: ON" : "Music: OFF";
-        String soundText = MemoryManager.loadIsSoundOn() ? "Sound: ON" : "Sound: OFF";
+        // Переведено на русский язык
+        String musicText = MemoryManager.loadIsMusicOn() ? "Музыка: ВКЛ" : "Музыка: ВЫКЛ";
+        String soundText = MemoryManager.loadIsSoundOn() ? "Звуки: ВКЛ" : "Звуки: ВЫКЛ";
 
-        musicButton = new UIFactory.Button(300, 300, 200, 50, musicText, game.font);
-        soundButton = new UIFactory.Button(300, 230, 200, 50, soundText, game.font);
-        backButton = new UIFactory.Button(300, 160, 200, 50, "Back", game.font);
+        // ИСПРАВЛЕНО: Добавлен седьмой параметр game.buttonTexture в конструкторы всех трех кнопок
+        musicButton = new UIFactory.Button(300, 300, 200, 50, musicText, game.font, game.buttonTexture);
+        soundButton = new UIFactory.Button(300, 230, 200, 50, soundText, game.font, game.buttonTexture);
+        backButton = new UIFactory.Button(300, 160, 200, 50, "Назад", game.font, game.buttonTexture);
     }
 
     @Override
@@ -43,7 +45,8 @@ public class SettingsScreen extends ScreenAdapter {
         if (game.menuBackground != null) {
             game.batch.draw(game.menuBackground, 0, 0, 800, 480);
         }
-        game.font.draw(game.batch, "Settings", 350, 380);
+        // Заголовок переведен на русский язык
+        game.font.draw(game.batch, "Настройки", 350, 380);
         musicButton.draw(game.batch);
         soundButton.draw(game.batch);
         backButton.draw(game.batch);
@@ -53,7 +56,7 @@ public class SettingsScreen extends ScreenAdapter {
     private void handleInput() {
         if (Gdx.input.justTouched()) {
             Vector3 touch = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
-            game.camera.unproject(touch);
+            game.viewport.unproject(touch);
             float tx = touch.x, ty = touch.y;
 
             if (musicButton.isHit(tx, ty)) {
@@ -62,13 +65,15 @@ public class SettingsScreen extends ScreenAdapter {
                 game.soundManager.isMusicOn = newState;
                 if (newState) game.soundManager.playMusic();
                 else game.soundManager.stopMusic();
-                musicButton.setText(newState ? "Music: ON" : "Music: OFF");
+                // Текст переключения переведен на русский язык
+                musicButton.setText(newState ? "Музыка: ВКЛ" : "Музыка: ВЫКЛ");
             }
             else if (soundButton.isHit(tx, ty)) {
                 boolean newState = !MemoryManager.loadIsSoundOn();
                 MemoryManager.saveSoundSettings(newState);
                 game.soundManager.isSoundOn = newState;
-                soundButton.setText(newState ? "Sound: ON" : "Sound: OFF");
+                // Текст переключения переведен на русский язык
+                soundButton.setText(newState ? "Звуки: ВКЛ" : "Звуки: ВЫКЛ");
             }
             else if (backButton.isHit(tx, ty)) {
                 if (previousScreen != null) {
@@ -79,4 +84,10 @@ public class SettingsScreen extends ScreenAdapter {
             }
         }
     }
+
+    @Override
+    public void resize(int width, int height) {
+        game.viewport.update(width, height, true);
+    }
+
 }

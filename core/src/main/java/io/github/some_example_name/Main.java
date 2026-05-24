@@ -11,6 +11,7 @@ public class Main {
         config.setTitle("School Escape");
         config.setWindowedMode(800, 480);
         config.setForegroundFPS(60);
+
         new Lwjgl3Application(new SchoolEscapeGame(), config);
     }
 }

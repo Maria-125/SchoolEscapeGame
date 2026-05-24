@@ -12,15 +12,24 @@ public class Player {
     public float velocityY = 0;
     public boolean isGrounded = true;
     public float currentSpeed = 55;
+
     public void setBaseSpeed(float speed) {
         currentSpeed = speed;
-    };
+    }
+
     private float minSpeed = 40;
     private float maxSpeed = 120;
-    private Texture texture;
+
+    // Текстуры для анимации ходьбы
+    private Texture texture1;
+    private Texture texture2;
+    private float animTimer = 0;
+    private boolean useSecondTexture = false;
 
     public Player() {
-        texture = new Texture(FilePaths.PLAYER);
+        // Загружаем обе картинки ног ученика
+        texture1 = new Texture(FilePaths.PLAYER);
+        texture2 = new Texture(FilePaths.PLAYER2);
     }
 
     public void update(float delta) {
@@ -35,6 +44,18 @@ public class Player {
             isGrounded = true;
         } else {
             isGrounded = false;
+        }
+
+        // Логика смены ног: переключаем текстуры каждые 0.15 секунды только когда бежим по земле
+        if (isGrounded) {
+            animTimer += delta;
+            if (animTimer > 0.15f) {
+                animTimer = 0;
+                useSecondTexture = !useSecondTexture;
+            }
+        } else {
+            // В воздухе (при прыжке) всегда используется первая стандартная поза
+            useSecondTexture = false;
         }
     }
 
@@ -62,7 +83,9 @@ public class Player {
     }
 
     public void draw(SpriteBatch batch) {
-        batch.draw(texture, x, y, width*3, height*3);
+        // Отрисовываем активную в данный момент текстуру ног
+        Texture currentTexture = useSecondTexture ? texture2 : texture1;
+        batch.draw(currentTexture, x, y, width * 3, height * 3);
     }
 
     public Rectangle getBounds() {
@@ -70,6 +93,7 @@ public class Player {
     }
 
     public void dispose() {
-        texture.dispose();
+        if (texture1 != null) texture1.dispose();
+        if (texture2 != null) texture2.dispose();
     }
 }
