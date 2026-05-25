@@ -74,6 +74,7 @@ public class GameScreen extends ScreenAdapter {
 
         levelManager.booksCollected = 0;
         levelManager.booksToCollect = levelManager.getBooksRequired();
+        levelManager.setCheckpoint();
 
         uiCamera = new OrthographicCamera();
         uiViewport = new FitViewport(800, 480, uiCamera);
@@ -203,45 +204,57 @@ public class GameScreen extends ScreenAdapter {
         checkTeacherCaught();
         checkLevelCompletion();
 
-        for (int i = particles.size - 1; i >= 0; i--) {
-            Particle p = particles.size > i ? particles.get(i) : null;
-            if (p != null) {
-                p.life -= delta;
-                p.x += p.vx * delta;
-                p.y += p.vy * delta;
-                p.vy -= 400 * delta;
-                if (p.life <= 0) particles.removeIndex(i);
+        java.util.Iterator<Particle> iter = particles.iterator();
+        while (iter.hasNext()) {
+            Particle p = iter.next();
+            p.life -= delta;
+            p.x += p.vx * delta;
+            p.y += p.vy * delta;
+            p.vy -= 400 * delta; // гравитация для частиц
+
+            if (p.life <= 0) {
+                iter.remove();
             }
         }
     }
 
 
+
     void updateObjects(float delta) {
+        float screenLeft = game.camera.position.x - 500;
+        float screenRight = game.camera.position.x + 800;
+
+        // Учебники
         for (int i = 0; i < books.size; i++) {
             Book b = books.get(i);
             b.update(delta);
-            if (!b.active) {
+            if (!b.active || b.x < screenLeft) {
                 b.dispose();
                 books.removeIndex(i--);
             }
         }
+
+        // Оценки
         for (int i = 0; i < grades.size; i++) {
             Grade g = grades.get(i);
             g.update(delta);
-            if (!g.active) {
+            if (!g.active || g.x < screenLeft) {
                 g.dispose();
                 grades.removeIndex(i--);
             }
         }
+
+        // Снаряды
         for (int i = 0; i < shots.size; i++) {
             PaperShot s = shots.get(i);
             s.update(delta);
-            if (!s.active) {
+            if (!s.active || s.x > screenRight) {
                 s.dispose();
                 shots.removeIndex(i--);
             }
         }
     }
+
 
     void spawnObjects(float delta) {
         spawnTimer += delta;
@@ -456,4 +469,5 @@ public class GameScreen extends ScreenAdapter {
         if (shootBtnTexture != null) shootBtnTexture.dispose();
         if (shapeRenderer != null) shapeRenderer.dispose();
     }
+
 }

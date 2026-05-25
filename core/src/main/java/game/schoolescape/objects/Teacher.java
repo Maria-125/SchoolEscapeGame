@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Rectangle;
 import game.schoolescape.managers.FilePaths;
 
 public class Teacher {
-    public float x = 50, y = 160;
+    public float x = 50, y = 210;
     public float width = 45, height = 70;
     public float currentSpeed = 75;
     public float acceleration = 1.7f;
@@ -78,7 +78,7 @@ public class Teacher {
         currentSpeed = 60;
         speedIncreaseTimer = 0;
         x = 50;
-        y = 160;
+        y = 210;
         isHitting = false;
         hitAnimTimer = 0;
     }

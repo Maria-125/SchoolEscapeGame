@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Rectangle;
 import game.schoolescape.managers.FilePaths;
 
 public class Player {
-    public float x = 250, y = 90;
+    public float x = 250, y = 140;
     public float width = 40, height = 50;
     public float velocityY = 0;
     public boolean isGrounded = true;
@@ -36,8 +36,8 @@ public class Player {
         // гравитация
         velocityY += -800 * delta;
         y += velocityY * delta;
-        if (y <= 150) {
-            y = 150;
+        if (y <= 200) {
+            y = 200;
             velocityY = 0;
             isGrounded = true;
         } else {

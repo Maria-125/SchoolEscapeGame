@@ -52,8 +52,8 @@ public class LevelCompleteScreen extends ScreenAdapter {
             game.batch.draw(game.menuBackground, 0, 0, 800, 480);
         }
 
-        game.font.draw(game.batch, "Класс " + levelManager.currentLevel + " пройден!", 250, 380);
-        game.font.draw(game.batch, "Средний балл: " + String.format("%.2f", averageGrade), 250, 350);
+        game.font.draw(game.batch, "Класс " + levelManager.currentLevel + " пройден!", 300, 380);
+        game.font.draw(game.batch, "Средний балл: " + String.format("%.2f", averageGrade), 300, 350);
 
         nextButton.draw(game.batch);
         restartButton.draw(game.batch);

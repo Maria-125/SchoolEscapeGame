@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Rectangle;
 import game.schoolescape.managers.FilePaths;
 
 public class Grade {
-    public float x, y = 160;
+    public float x, y = 210;
     public float width = 30, height = 40;
     public float speed = 150;
     public boolean active = true;
@@ -16,7 +16,7 @@ public class Grade {
 
     public Grade(float startX, int value) {
         this.x = startX;
-        this.y = 165;
+        this.y = 215;
         this.value = value;
         if (value == 5) texture = new Texture(FilePaths.GRADE_5);
         else texture = new Texture(FilePaths.GRADE_2);

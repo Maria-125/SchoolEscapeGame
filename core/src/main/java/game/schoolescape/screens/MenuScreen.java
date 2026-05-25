@@ -31,6 +31,7 @@ public class MenuScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta) {
+        game.font.setColor(com.badlogic.gdx.graphics.Color.WHITE);
         handleInput();
 
         Gdx.gl.glClearColor(0, 0, 0, 1);

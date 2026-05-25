@@ -14,7 +14,9 @@ public class RulesScreen extends ScreenAdapter {
 
     public RulesScreen(SchoolEscapeGame game) {
         this.game = game;
-        backButton = new UIFactory.Button(300, 80, 200, 50, "Назад", game.font, game.buttonTexture);
+
+        // Кнопка отцентрирована (400 - половина ширины кнопки)
+        backButton = new UIFactory.Button(300, 45, 200, 50, "Назад", game.font, game.buttonTexture);
     }
 
     @Override
@@ -24,9 +26,9 @@ public class RulesScreen extends ScreenAdapter {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        game.camera.position.set(400, 240, 0);
-        game.camera.update();
-        game.batch.setProjectionMatrix(game.camera.combined);
+        // Применяем вьюпорт, чтобы подложка и кнопки стояли ровно на экране Honor
+        game.viewport.apply();
+        game.batch.setProjectionMatrix(game.viewport.getCamera().combined);
 
         game.batch.begin();
 
@@ -34,16 +36,33 @@ public class RulesScreen extends ScreenAdapter {
             game.batch.draw(game.menuBackground, 0, 0, 800, 480);
         }
 
-        game.font.draw(game.batch, "ПРАВИЛА ИГРЫ", 340, 390);
-        game.font.draw(game.batch, "Собирай 5, чтобы ускориться", 100, 360);
-        game.font.draw(game.batch, "Избегай 2, чтобы не замедляться", 100, 330);
-        game.font.draw(game.batch, "Сбивай учебники бумажными самолётиками", 100, 300);
-        game.font.draw(game.batch, "   пока они не попали в тебя", 100, 280);
-        game.font.draw(game.batch, "Не позволяй учителю поймать тебя!", 100, 250);
-        game.font.draw(game.batch, "Собери нужное количество учебников", 100, 220);
-        game.font.draw(game.batch, "   чтобы пройти уровень", 100, 200);
-        game.font.draw(game.batch, "Пройди все 11 классов, чтобы сбежать из школы!", 100, 170);
+        // ДОБАВЛЕНО: Рисуем черную полупрозрачную подложку под правила (прозрачность 70%)
+        if (game.whitePixel != null) {
+            game.batch.setColor(0, 0, 0, 0.7f); // Черный цвет, альфа = 0.7
 
+            // Рисуем рамку: x = 80, y = 110, ширина = 640, высота = 320
+            game.batch.draw(game.whitePixel, 80, 110, 640, 320);
+
+            game.batch.setColor(1, 1, 1, 1); // Сбрасываем цвет обратно в белый
+        }
+
+        // ДОБАВЛЕНО: Так как подложка темная, делаем текст правил БЕЛЫМ для идеальной читаемости
+        game.font.setColor(1, 1, 1, 1);
+
+        // Координаты X сдвинуты со 100 на 110, чтобы текст красиво сидел внутри черной рамки
+        game.font.draw(game.batch, "ПРАВИЛА ИГРЫ", 335, 420);
+        game.font.draw(game.batch, "Собирай 5, чтобы ускориться", 110, 370);
+        game.font.draw(game.batch, "Избегай 2, чтобы не замедляться", 110, 340);
+        game.font.draw(game.batch, "Сбивай учебники бумажными самолётиками", 110, 310);
+        game.font.draw(game.batch, "   пока они не попали в тебя", 110, 290);
+        game.font.draw(game.batch, "Не позволяй учителю поймать тебя!", 110, 260);
+        game.font.draw(game.batch, "Собери нужное количество учебников", 110, 230);
+        game.font.draw(game.batch, "   чтобы пройти уровень", 110, 210);
+        game.font.draw(game.batch, "Пройди все 11 классов, чтобы сбежать из школы!", 110, 150);
+
+        // ИСПРАВЛЕНО: Перед отрисовкой кнопки возвращаем глобальный ЧЕРНЫЙ цвет шрифта,
+        // чтобы текст внутри кнопки "Назад" отображался корректно
+        game.font.setColor(com.badlogic.gdx.graphics.Color.BLACK);
         backButton.draw(game.batch);
 
         game.batch.end();
@@ -65,5 +84,4 @@ public class RulesScreen extends ScreenAdapter {
     public void resize(int width, int height) {
         game.viewport.update(width, height, true);
     }
-
 }

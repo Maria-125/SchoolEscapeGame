@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Rectangle;
 import game.schoolescape.managers.FilePaths;
 
 public class Book {
-    public float x, y = 155;
+    public float x, y = 205;
     public float width = 35, height = 45;
     public float speed = 180;
     public boolean active = true;
@@ -15,7 +15,7 @@ public class Book {
 
     public Book(float startX) {
         this.x = startX;
-        this.y = 165;
+        this.y = 215;
         texture = new Texture(FilePaths.BOOK);
     }
 
